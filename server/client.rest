@@ -1,0 +1,12 @@
+### Get tasks
+# “### Get tasks” 属于注释文本，用来给你做标记
+# “Send Request” 则是 REST Client 的一个可点击提示，点击后可发送请求
+GET http://localhost:3001
+
+### Add new task
+POST http://localhost:3001/new HTTP/1.1
+Content-Type: application/json
+
+{
+  "description": "Test from REST Client"
+}
