@@ -8,9 +8,15 @@ app .use(express.json());
 
 const port = 3001;
 
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'todo',
+  password: '123',
+  port: 5432,
+});
+
 app.post("/new", (req, res) => {
-    const pool = openDb(); 
-    
     pool.query(
       'insert into task (description) values ($1) returning *',
       [req.body.description],
@@ -24,18 +30,7 @@ app.post("/new", (req, res) => {
     );
   });
   
-
-
 app.get("/",(req,res)=>{
-    const pool = new Pool({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'todo',
-        password: '123',
-        port: 5432,
-    })
-
-
     pool.query('SELECT * FROM task', (error, results) => {
         if (error) {
             res.status(500).json({ error:error.message })
