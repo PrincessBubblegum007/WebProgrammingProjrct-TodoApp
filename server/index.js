@@ -28,8 +28,22 @@ app.post("/new", (req, res) => {
         }
       }
     );
-  });
-  
+});
+
+app.delete("/delete/:id", (req, res) => {
+  const id = parseInt(req.params.id)
+
+  pool.query('delete from task where id = $1',
+    [id],
+    (error, result) => {
+      if (error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(200).json({ id: id });
+      }
+    });
+});
+
 app.get("/",(req,res)=>{
     pool.query('SELECT * FROM task', (error, results) => {
         if (error) {
