@@ -10,14 +10,24 @@ class Todos {
 
     getTasks = () => {
         return new Promise(async (resolve, reject) => {
-            fetch(this.#backendUrl)
-                .then(response => response.json())
-                .then((json) => {
-                    this.#readJson(json);
-                    resolve(this.#tasks);   
-                }, (error) => {
-                    reject(error);
+            fetch(this.#backendUrl + '/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
                 })
+                .then((json) => {
+                    if (Array.isArray(json)) {
+                        this.#readJson(json);
+                        resolve(this.#tasks);
+                    } else {
+                        throw new Error('Invalid data format received');
+                    }
+                })
+                .catch((error) => {
+                    reject(error);
+                });
         });
     }
 
@@ -59,6 +69,11 @@ class Todos {
       
 
     #readJson = (tasksAsJson) => {
+        if (!Array.isArray(tasksAsJson)) {
+            console.error('Expected array of tasks, got:', tasksAsJson);
+            return;
+        }
+        this.#tasks = []; // Clear existing tasks
         tasksAsJson.forEach(node => {
             const task = new Task(node.id, node.description);
             this.#tasks.push(task);
